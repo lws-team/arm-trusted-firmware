@@ -27,7 +27,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
+#include <gicv2.h>
 #include <platform_def.h>
+#include <platform.h>
 #include <arch_helpers.h>
 #include <psci.h>
 #include <debug.h>
@@ -132,7 +135,7 @@ static int qemu_validate_ns_entrypoint(uintptr_t entrypoint)
 }
 
 /*******************************************************************************
- * FVP handler called when a CPU is about to enter standby.
+ * Platform handler called when a CPU is about to enter standby.
  ******************************************************************************/
 static void qemu_cpu_standby(plat_local_state_t cpu_state)
 {
@@ -148,17 +151,23 @@ static void qemu_cpu_standby(plat_local_state_t cpu_state)
 }
 
 /*******************************************************************************
- * FVP handler called when a power domain is about to be turned on. The
+ * Platform handler called when a power domain is about to be turned on. The
  * mpidr determines the CPU to be turned on.
  ******************************************************************************/
 static int qemu_pwr_domain_on(u_register_t mpidr)
 {
-	assert(0);
-	return 0;
+	int rc = PSCI_E_SUCCESS;
+	unsigned pos = platform_get_core_pos(mpidr);
+	uint64_t *hold_base = (uint64_t *)PLAT_QEMU_HOLD_BASE;
+
+	hold_base[pos] = PLAT_QEMU_HOLD_STATE_GO;
+	sev();
+
+	return rc;
 }
 
 /*******************************************************************************
- * FVP handler called when a power domain is about to be turned off. The
+ * Platform handler called when a power domain is about to be turned off. The
  * target_state encodes the power state that each level should transition to.
  ******************************************************************************/
 void qemu_pwr_domain_off(const psci_power_state_t *target_state)
@@ -167,7 +176,7 @@ void qemu_pwr_domain_off(const psci_power_state_t *target_state)
 }
 
 /*******************************************************************************
- * FVP handler called when a power domain is about to be suspended. The
+ * Platform handler called when a power domain is about to be suspended. The
  * target_state encodes the power state that each level should transition to.
  ******************************************************************************/
 void qemu_pwr_domain_suspend(const psci_power_state_t *target_state)
@@ -176,21 +185,26 @@ void qemu_pwr_domain_suspend(const psci_power_state_t *target_state)
 }
 
 /*******************************************************************************
- * FVP handler called when a power domain has just been powered on after
+ * Platform handler called when a power domain has just been powered on after
  * being turned off earlier. The target_state encodes the low power state that
  * each level has woken up from.
  ******************************************************************************/
 void qemu_pwr_domain_on_finish(const psci_power_state_t *target_state)
 {
-	assert(0);
+	assert(target_state->pwr_domain_state[MPIDR_AFFLVL0] ==
+					PLAT_LOCAL_STATE_OFF);
+
+	/* TODO: This setup is needed only after a cold boot */
+	gicv2_pcpu_distif_init();
+
+	/* Enable the gic cpu interface */
+	gicv2_cpuif_enable();
 }
 
 /*******************************************************************************
- * FVP handler called when a power domain has just been powered on after
+ * Platform handler called when a power domain has just been powered on after
  * having been suspended earlier. The target_state encodes the low power state
  * that each level has woken up from.
- * TODO: At the moment we reuse the on finisher and reinitialize the secure
- * context. Need to implement a separate suspend finisher.
  ******************************************************************************/
 void qemu_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 {
@@ -198,7 +212,7 @@ void qemu_pwr_domain_suspend_finish(const psci_power_state_t *target_state)
 }
 
 /*******************************************************************************
- * FVP handlers to shutdown/reboot the system
+ * Platform handlers to shutdown/reboot the system
  ******************************************************************************/
 static void __dead2 qemu_system_off(void)
 {
@@ -229,12 +243,10 @@ int plat_setup_psci_ops(uintptr_t sec_entrypoint,
 				const plat_psci_ops_t **psci_ops)
 {
 	secure_entrypoint = (unsigned long) sec_entrypoint;
+	uintptr_t *mailbox = (void *) PLAT_QEMU_TRUSTED_MAILBOX_BASE;
 
 	*psci_ops = &plat_qemu_psci_pm_ops;
 
-#if 0
-	/* Setup mailbox with entry point. */
-	arm_program_trusted_mailbox(sec_entrypoint);
-#endif
+	*mailbox = sec_entrypoint;
 	return 0;
 }

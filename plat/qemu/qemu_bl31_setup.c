@@ -133,18 +133,6 @@ void bl31_platform_setup(void)
 	gicv2_distif_init();
 	gicv2_pcpu_distif_init();
 	gicv2_cpuif_enable();
-
-#if 0
-	/* Enable and initialize the System level generic timer */
-	mmio_write_32(ARM_SYS_CNTCTL_BASE + CNTCR_OFF,
-			CNTCR_FCREQ(0) | CNTCR_EN);
-
-	/* Allow access to the System counter timer module */
-	arm_configure_sys_timer();
-
-	/* Initialize power controller before setting up topology */
-	plat_arm_pwrc_setup();
-#endif
 }
 
 
