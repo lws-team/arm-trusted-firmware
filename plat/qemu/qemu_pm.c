@@ -157,7 +157,7 @@ static void qemu_cpu_standby(plat_local_state_t cpu_state)
 static int qemu_pwr_domain_on(u_register_t mpidr)
 {
 	int rc = PSCI_E_SUCCESS;
-	unsigned pos = platform_get_core_pos(mpidr);
+	unsigned pos = plat_core_pos_by_mpidr(mpidr);
 	uint64_t *hold_base = (uint64_t *)PLAT_QEMU_HOLD_BASE;
 
 	hold_base[pos] = PLAT_QEMU_HOLD_STATE_GO;
