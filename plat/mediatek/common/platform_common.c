@@ -107,7 +107,7 @@ void boot_to_kernel(uint64_t x1, uint64_t x2, uint64_t x3, uint64_t x4)
 		kernel_boot_once_flag = 1;
 
 		console_init(gteearg.atf_log_port,
-			MT6795_UART_CLOCK, MT6795_BAUDRATE);
+			MT_UART_CLOCK, MT_BAUDRATE);
 		INFO("save kernel info\n");
 		save_kernel_info(x1, x2, x3, x4);
 		bl31_prepare_kernel_entry(x4);

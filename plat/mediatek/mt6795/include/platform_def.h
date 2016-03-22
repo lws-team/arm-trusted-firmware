@@ -66,6 +66,9 @@
 #define MT6795_BAUDRATE   (921600)
 #define MT6795_UART_CLOCK (26000000)
 
+#define MT_BAUDRATE	MT6795_BAUDRATE
+#define MT_UART_CLOCK	MT6795_UART_CLOCK
+
 /*******************************************************************************
  * System counter frequency related constants
  ******************************************************************************/

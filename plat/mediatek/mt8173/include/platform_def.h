@@ -64,6 +64,9 @@
 #define MT8173_BAUDRATE		(115200)
 #define MT8173_UART_CLOCK	(26000000)
 
+#define MT_BAUDRATE	MT8173_BAUDRATE
+#define MT_UART_CLOCK	MT8173_UART_CLOCK
+
 /*******************************************************************************
  * System counter frequency related constants
  ******************************************************************************/
