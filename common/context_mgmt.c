@@ -138,8 +138,11 @@ static void cm_init_context_common(cpu_context_t *ctx, const entry_point_info_t 
 	sctlr_elx = EP_GET_EE(ep->h.attr) ? SCTLR_EE_BIT : 0;
 	if (GET_RW(ep->spsr) == MODE_RW_64)
 		sctlr_elx |= SCTLR_EL1_RES1;
-	else
+	else {
 		sctlr_elx |= SCTLR_AARCH32_EL1_RES1;
+		/* enable CP15BEN for Aarch32 */
+		sctlr_elx |= (1 << 5);
+	}
 	write_ctx_reg(get_sysregs_ctx(ctx), CTX_SCTLR_EL1, sctlr_elx);
 
 	if ((GET_RW(ep->spsr) == MODE_RW_64
