@@ -98,7 +98,7 @@
 #endif
 
 #if IMAGE_BL31
-# define PLAT_ARM_MMAP_ENTRIES		5
+# define PLAT_ARM_MMAP_ENTRIES		6
 # define MAX_XLAT_TABLES		2
 #endif
 
