@@ -46,6 +46,7 @@
 	.macro	handle_sync_exception
 	/* Enable the SError interrupt */
 	msr	daifclr, #DAIF_ABT_BIT
+	msr	daifclr, #DAIF_DBG_BIT
 
 	str	x30, [sp, #CTX_GPREGS_OFFSET + CTX_GPREG_LR]
 	mrs	x30, esr_el3
@@ -56,6 +57,7 @@
 
 	cmp	x30, #EC_AARCH64_SMC
 	b.eq	smc_handler64
+
 
 	/* -----------------------------------------------------
 	 * The following code handles any synchronous exception

@@ -34,6 +34,9 @@
 
 	.globl	bl31_entrypoint
 
+	.globl __getspin
+	.globl __set_entries
+	.globl __uboot_data
 
 	/* -----------------------------------------------------
 	 * bl31_entrypoint() is the cold boot entrypoint,
@@ -42,6 +45,16 @@
 	 */
 
 func bl31_entrypoint
+	b __skipspin
+__getspin:
+	b bl31_getspin
+__set_entries:
+	b bl31_uboot_set_entries
+__uboot_data:
+	.quad 0
+	.quad 0
+	.quad 0
+__skipspin:
 	/* ---------------------------------------------------------------
 	 * Preceding bootloader has populated x0 with a pointer to a
 	 * 'bl31_params' structure & x1 with a pointer to platform

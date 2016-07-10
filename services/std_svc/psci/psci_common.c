@@ -176,7 +176,9 @@ int get_power_on_target_afflvl()
 	 * pending"
 	 */
 	state = psci_get_state(node);
-	assert(state == PSCI_STATE_SUSPEND || state == PSCI_STATE_ON_PENDING);
+	if (node->mpidr != 0) {
+	  assert(state == PSCI_STATE_SUSPEND || state == PSCI_STATE_ON_PENDING);
+	}
 #endif
 
 	/*
