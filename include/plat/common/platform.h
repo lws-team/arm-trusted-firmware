@@ -160,6 +160,11 @@ void bl2_plat_set_bl32_ep_info(struct image_info *image,
 /* Gets the memory layout for BL3-2 */
 void bl2_plat_get_bl32_meminfo(struct meminfo *mem_info);
 
+struct cpu_context;
+
+/* optional chance to set registers by platform before entry to BL3.2 */
+void bl31_plat_prep_cpu_ctx(struct cpu_context *cpu_ctx);
+
 /*******************************************************************************
  * Optional BL2 functions (may be overridden)
  ******************************************************************************/
@@ -168,7 +173,7 @@ void bl2_plat_get_bl32_meminfo(struct meminfo *mem_info);
  * Mandatory BL3-1 functions
  ******************************************************************************/
 void bl31_early_platform_setup(struct bl31_params *from_bl2,
-				void *plat_params_from_bl2);
+				void *plat_params_from_bl2, uint32_t _secure_device_id);
 void bl31_plat_arch_setup(void);
 void bl31_platform_setup(void);
 struct entry_point_info *bl31_plat_get_next_image_ep_info(uint32_t type);

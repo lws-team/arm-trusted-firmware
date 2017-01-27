@@ -38,6 +38,9 @@
 #include <platform_def.h>
 #include "bl2_private.h"
 
+
+extern uint32_t secure_device_id;
+
 #if TRUSTED_BOARD_BOOT
 
 #ifdef BL32_BASE
@@ -446,6 +449,8 @@ void bl2_main(void)
 		ERROR("Failed to load BL3-3 (%i)\n", e);
 		panic();
 	}
+
+	bl31_ep_info->args.arg2 = secure_device_id;
 
 	/* Flush the params to be passed to memory */
 	bl2_plat_flush_bl31_params();

@@ -319,6 +319,7 @@ static int32_t opteed_init(void)
 	assert(optee_entry_point);
 
 	cm_init_context(mpidr, optee_entry_point);
+	bl31_plat_prep_cpu_ctx(&optee_ctx->cpu_ctx);
 
 	/*
 	 * Arrange for an entry into OPTEE. It will be returned via

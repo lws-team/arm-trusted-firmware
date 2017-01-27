@@ -61,6 +61,17 @@ void bl31_lib_init(void)
 	cm_init();
 }
 
+#pragma weak bl31_plat_prep_cpu_ctx
+
+/* if the plat doesn't provide a secure device id even,
+ * set it to a constant
+ */
+
+void bl31_plat_prep_cpu_ctx(struct cpu_context *cpu_ctx)
+{
+	write_ctx_reg(&cpu_ctx->gpregs_ctx, CTX_GPREG_X2, 0);
+}
+
 /*******************************************************************************
  * BL31 is responsible for setting up the runtime services for the primary cpu
  * before passing control to the bootloader or an Operating System. This

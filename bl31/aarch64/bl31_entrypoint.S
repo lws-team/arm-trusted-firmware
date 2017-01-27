@@ -51,6 +51,7 @@ func bl31_entrypoint
 #if !RESET_TO_BL31
 	mov	x20, x0
 	mov	x21, x1
+	mov	x22, x2
 #else
 	/* ---------------------------------------------
 	 * Set the CPU endianness before doing anything
@@ -195,6 +196,8 @@ func bl31_entrypoint
 	mov	x0, x20
 	mov	x1, x21
 #endif
+
+	mov	x2, x22
 
 	bl	bl31_early_platform_setup
 	bl	bl31_plat_arch_setup

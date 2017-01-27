@@ -54,6 +54,8 @@
 #define IDMAC_DES1_BS1(x)	((x) & 0x1fff)
 #define IDMAC_DES2_BS2(x)	(((x) & 0x1fff) << 13)
 
+uint32_t secure_device_id;
+
 struct idmac_desc {
 	unsigned int		des0;
 	unsigned int		des1;
@@ -372,6 +374,8 @@ static int enum_mmc0_card(void)
 		VERBOSE(" 0x%x", cid[i]);
 	}
 	VERBOSE("\n");
+
+	secure_device_id = (cid[1] << 8) | (cid[0] >> 24);
 
 	/* CMD3: STBY */
 	ret = mmc0_send_cmd(3, EMMC_FIX_RCA << 16, buf);
